@@ -18,10 +18,10 @@ async function fetchProducts() {
   }
 }
 
-// Funzione per renderizzare i prodotti
+// Funzione per renderizzare i prodotti sulla homepage
 function renderProducts(products) {
   const productList = document.getElementById("products");
-  if (!productList) return; // Verifica se siamo sulla pagina giusta
+  if (!productList) return; // Assicurati di essere sulla pagina giusta
 
   productList.innerHTML = "";
   const template = document.getElementById("product-template").content;
@@ -34,48 +34,33 @@ function renderProducts(products) {
     clone.querySelector(".product-price").textContent = `$${product.price}`;
     clone.querySelector(".product-image").src = product.imageUrl;
 
-    // Funzione per cancellare un prodotto
+    clone.querySelector(".edit-btn").setAttribute("href", `edit.html?id=${product._id}`);
     clone.querySelector(".delete-btn").addEventListener("click", () => deleteProduct(product._id));
 
     productList.appendChild(clone);
   });
 }
 
-// Funzione per creare un nuovo prodotto
-async function createProduct(product) {
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(product),
-    });
-    if (!response.ok) throw new Error("Failed to create product");
-    fetchProducts();
-  } catch (error) {
-    console.error("Error creating product:", error);
-  }
-}
-
-// Funzione per recuperare un prodotto per ID
+// Funzione per recuperare un prodotto specifico tramite l'ID
 async function fetchProductById(productId) {
   try {
     const response = await fetch(`${API_URL}${productId}`, { headers });
     if (!response.ok) throw new Error("Failed to fetch product");
     const product = await response.json();
-    fillForm(product);
+    fillForm(product);  // Riempi il form con i dati del prodotto
   } catch (error) {
     console.error("Error fetching product:", error);
   }
 }
 
-// Funzione per riempire il form di modifica con i dettagli del prodotto
+// Funzione per riempire il form di modifica con i dati del prodotto
 function fillForm(product) {
   document.getElementById("name").value = product.name;
   document.getElementById("description").value = product.description;
   document.getElementById("brand").value = product.brand;
   document.getElementById("imageUrl").value = product.imageUrl;
   document.getElementById("price").value = product.price;
-  document.getElementById("deleteProduct").onclick = () => deleteProduct(product._id); // Aggiunge l'azione al pulsante "Delete"
+  document.getElementById("deleteProduct").onclick = () => deleteProduct(product._id);  // Imposta il pulsante "Delete"
 }
 
 // Funzione per aggiornare un prodotto
@@ -109,7 +94,7 @@ async function deleteProduct(productId) {
   }
 }
 
-// Logica per il form di creazione prodotto
+// Logica per il form di creazione nuovo prodotto
 if (document.getElementById("productForm")) {
   const form = document.getElementById("productForm");
   form.onsubmit = (event) => {
@@ -121,17 +106,33 @@ if (document.getElementById("productForm")) {
       imageUrl: form.imageUrl.value,
       price: parseFloat(form.price.value),
     };
-    createProduct(newProduct);
+    createProduct(newProduct);  // Funzione per creare un nuovo prodotto
     form.reset();
   };
 }
 
-// Logica per il form di modifica prodotto
+// Funzione per creare un nuovo prodotto
+async function createProduct(product) {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(product),
+    });
+    if (!response.ok) throw new Error("Failed to create product");
+    fetchProducts();  // Ricarica la lista dei prodotti
+  } catch (error) {
+    console.error("Error creating product:", error);
+  }
+}
+
+// Logica per la pagina di modifica prodotto
 if (document.getElementById("editForm")) {
   const form = document.getElementById("editForm");
-  const productId = new URLSearchParams(window.location.search).get("id"); // Otteniamo l'ID del prodotto dalla query string
+  const productId = new URLSearchParams(window.location.search).get("id");  // Ottieni l'ID dal parametro URL
+
   if (productId) {
-    fetchProductById(productId); // Recuperiamo il prodotto se l'ID è presente
+    fetchProductById(productId);  // Recupera il prodotto da modificare
 
     form.onsubmit = (event) => {
       event.preventDefault();
@@ -142,12 +143,14 @@ if (document.getElementById("editForm")) {
         imageUrl: form.imageUrl.value,
         price: parseFloat(form.price.value),
       };
-      updateProduct(productId, updatedProduct); // Aggiorniamo il prodotto
+      updateProduct(productId, updatedProduct);  // Aggiorna il prodotto con i nuovi dati
     };
+  } else {
+    alert("Product ID is missing in the URL.");
   }
 }
 
-// Recupero e renderizzazione dei prodotti per la pagina principale
+// Inizializza il caricamento dei prodotti per la homepage
 if (document.getElementById("products")) {
   fetchProducts();
 }

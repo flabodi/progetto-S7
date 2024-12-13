@@ -17,18 +17,18 @@
 
   <div class="card-group">
     <div class="container">
-      <div id="products" class="row"></div>
+      <div id="products" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4"></div>
       <template id="product-template">
-        <div class="col-md-2 col-lg-3 mb-1">
-          <div class="card" style="width: 18rem ;">
-            <img src="" class="card-img-top product-image img-fluid" alt="Product image">
-            <div class="card-body">
+        <div class="col mb-4">
+          <div class="card h-100">
+            <img src="" class="card-img-top product-image mx-auto" alt="Product image" style="max-height: 200px; object-fit: contain;">
+            <div class="card-body d-flex flex-column">
               <h5 class="card-title product-name"></h5>
               <p class="card-text product-description"></p>
               <p class="card-text product-brand"></p>
               <p class="card-text">Price: <span class="product-price"></span></p>
               <a href="edit.html?id=PRODUCT_ID" class="btn btn-warning edit-btn">Edit</a>
-              <button class="btn btn-danger delete-btn">Delete</button>
+              <button class="btn btn-danger m-2 delete-btn">Delete</button>
             </div>
           </div>
         </div>
